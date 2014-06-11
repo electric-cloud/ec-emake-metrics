@@ -4,7 +4,7 @@ The "Emake-Metrics" plugin provides procedures to run emake builds with differen
 
 USAGE:
 
-You must first install and promote the plugin. Then, go to project Emake-Metrics-1.0.0. Here are the steps to find optimal emake speed:
+You must first install and promote the plugin. Then, go to the installed plugins list and click on Emake-Metrics to view the procedures. Here are the steps to find optimal emake speed:
 
 * Create a list of the different configurations with which you will be testing emake. Each configuration represents a permutation of hardware variables (e.g. hyperthreading=on, RAM=32GB, hdd=SSD). Assign each of these configurations a unique identifier (e.g. c-1.1) and store this information in a spreadsheet for reference.
 * To iterate over runs of emake, launch the run_emake_iterate_agents procedure (see the parameter descriptions for details). Do this for each configuration (be sure to pass the configuration identifier that you recorded earlier to the configuration_id parameter.
