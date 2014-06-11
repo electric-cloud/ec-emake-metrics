@@ -1,0 +1,1263 @@
+<exportedData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="commander.xsd" version="61" buildLabel="build_main_60729_2013.06.24_10:58:22" buildVersion="4.2.2.60729" passkey="75207e739a9c4c91c523526fa19ae659f28dad2f">
+  <exportPath>/projects/Emake-Metrics</exportPath>
+  <project>
+    <projectName>Emake-Metrics</projectName>
+    <description>Run emake builds with different configurations and different numbers of enabled agents to find the best build times (plus lots of other metrics).</description>
+    <resourceName />
+    <workspaceName />
+    <propertySheet>
+      <property>
+        <propertyName>metrics</propertyName>
+        <propertySheet>
+        </propertySheet>
+      </property>
+      <property>
+        <propertyName>units</propertyName>
+        <propertySheet>
+          <property>
+            <propertyName>agent_command_percentage</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>%</value>
+          </property>
+          <property>
+            <propertyName>agent_command_time</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>s</value>
+          </property>
+          <property>
+            <propertyName>agent_emake_request_percentage</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>%</value>
+          </property>
+          <property>
+            <propertyName>agent_emake_request_time</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>s</value>
+          </property>
+          <property>
+            <propertyName>agent_idle_percentage</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>%</value>
+          </property>
+          <property>
+            <propertyName>agent_idle_time</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>%</value>
+          </property>
+          <property>
+            <propertyName>emake_bandwidth_from_disk</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>MB</value>
+          </property>
+          <property>
+            <propertyName>emake_bandwidth_from_disk_active</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>MB/s</value>
+          </property>
+          <property>
+            <propertyName>emake_bandwidth_from_disk_overall</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>MB/s</value>
+          </property>
+          <property>
+            <propertyName>emake_bandwidth_network_from_agent</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>MB</value>
+          </property>
+          <property>
+            <propertyName>emake_bandwidth_network_from_agent_active</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>MB/s</value>
+          </property>
+          <property>
+            <propertyName>emake_bandwidth_network_from_agent_overall</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>MB/s</value>
+          </property>
+          <property>
+            <propertyName>emake_bandwidth_network_to_agent</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>MB</value>
+          </property>
+          <property>
+            <propertyName>emake_bandwidth_network_to_agent_active</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>MB/s</value>
+          </property>
+          <property>
+            <propertyName>emake_bandwidth_network_to_agent_overall</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>MB/s</value>
+          </property>
+          <property>
+            <propertyName>emake_bandwidth_to_disk</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>MB</value>
+          </property>
+          <property>
+            <propertyName>emake_bandwidth_to_disk_active</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>MB/s</value>
+          </property>
+          <property>
+            <propertyName>emake_bandwidth_to_disk_overall</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>MB/s</value>
+          </property>
+          <property>
+            <propertyName>emake_build_duration</propertyName>
+            <description />
+            <expandable>1</expandable>
+            <value>s</value>
+          </property>
+        </propertySheet>
+      </property>
+      <property>
+        <propertyName>ec_visibility</propertyName>
+        <expandable>1</expandable>
+        <value>all</value>
+      </property>
+      <property>
+        <propertyName>postp</propertyName>
+        <description />
+        <expandable>1</expandable>
+        <value>my @newMatchers = (
+    {
+      id      => "emake_finish",
+      pattern => q{(Finished|Interrupted) build: (.*) Duration: (\d+):(\d+) \(m:s\)},
+      action  => q{
+        $::gCommander->setProperty("/myJobStep/summary", "Build: $2 ($1) in $3:$4");
+        $::gCommander->setProperty("/myParent/emake_build_outcome", $1);
+        $::gCommander->setProperty("/myParent/emake_build_id", $2);
+        $::gCommander->setProperty("/myParent/metric_emake_build_duration", ($3 * 60) + $4);
+      }
+    },
+    {
+      id      => "emake_bandwidth_network_to_agent",
+      pattern => q{Network to agent: (.*)MB, (.*) MB/s active, (.*) MB/s overall},
+      action  => q{
+        $::gCommander->setProperty("/myParent/metric_emake_bandwidth_network_to_agent", $1);
+        $::gCommander->setProperty("/myParent/metric_emake_bandwidth_network_to_agent_active", $2);
+        $::gCommander->setProperty("/myParent/metric_emake_bandwidth_network_to_agent_overall", $3);
+      }
+    },
+    {
+      id      => "emake_bandwidth_network_from_agent",
+      pattern => q{Network from agent: (.*)MB, (.*) MB/s active, (.*) MB/s overall},
+      action  => q{
+        $::gCommander->setProperty("/myParent/metric_emake_bandwidth_network_from_agent", $1);
+        $::gCommander->setProperty("/myParent/metric_emake_bandwidth_network_from_agent_active", $2);
+        $::gCommander->setProperty("/myParent/metric_emake_bandwidth_network_from_agent_overall", $3);
+      }
+    },
+    {
+      id      => "emake_bandwidth_to_disk",
+      pattern => q{To disk: (.*)MB, (.*) MB/s active, (.*) MB/s overall},
+      action  => q{
+        $::gCommander->setProperty("/myParent/metric_emake_bandwidth_to_disk", $1);
+        $::gCommander->setProperty("/myParent/metric_emake_bandwidth_to_disk_active", $2);
+        $::gCommander->setProperty("/myParent/metric_emake_bandwidth_to_disk_overall", $3);
+      }
+    },
+    {
+      id      => "emake_bandwidth_from_disk",
+      pattern => q{From disk: (.*)MB, (.*) MB/s active, (.*) MB/s overall},
+      action  => q{
+        $::gCommander->setProperty("/myParent/metric_emake_bandwidth_from_disk", $1);
+        $::gCommander->setProperty("/myParent/metric_emake_bandwidth_from_disk_active", $2);
+        $::gCommander->setProperty("/myParent/metric_emake_bandwidth_from_disk_overall", $3);
+      }
+    },
+    {
+      id      => "emake_bandwidth_create_modify_usage",
+      pattern => q{Retry on HTTP error: .*},
+      action  => q{
+      }
+    },
+    {
+      id      => "emake_ignore_retry_on_http_error",
+      pattern => q{Create/Modify usage: (.*)MB, (.*) MB/s active, (.*) MB/s overall},
+      action  => q{
+        $::gCommander->setProperty("/myParent/metric_emake_bandwidth_create_modify_usage", $1);
+        $::gCommander->setProperty("/myParent/metric_emake_bandwidth_create_modify_usage_active", $2);
+        $::gCommander->setProperty("/myParent/metric_emake_bandwidth_create_modify_usage_overall", $3);
+      }
+    },
+    {
+      id      => "agent_metrics_command",
+      pattern => q{Command:\s+(.*)s\s+\(\s*(.*)%\)},
+      action  => q{
+        $::gCommander->setProperty("/myParent/metric_agent_command_time", $1);
+        $::gCommander->setProperty("/myParent/metric_agent_command_percentage", $2);
+      }
+    },
+    {
+      id      => "agent_metrics_emake_request",
+      pattern => q{Emake request:\s+(.*)s\s+\(\s*(.*)%\)},
+      action  => q{
+        $::gCommander->setProperty("/myParent/metric_agent_emake_request_time", $1);
+        $::gCommander->setProperty("/myParent/metric_agent_emake_request_percentage", $2);
+      }
+    },
+    {
+      id      => "agent_metrics_idle",
+      pattern => q{Idle:\s+(.*)s\s+\(\s*(.*)%\)},
+      action  => q{
+        $::gCommander->setProperty("/myParent/metric_agent_idle_time", $1);
+        $::gCommander->setProperty("/myParent/metric_agent_idle_percentage", $2);
+      }
+    },
+);
+unshift @::gMatchers, @newMatchers;
+</value>
+      </property>
+    </propertySheet>
+    <credential>
+      <credentialName>cm_admin</credentialName>
+      <description />
+      <password>BQjH8bLaQvYQkzyisSW53A==</password>
+      <userName>admin</userName>
+      <propertySheet>
+      </propertySheet>
+    </credential>
+    <procedure>
+      <procedureName>generate_csv</procedureName>
+      <description>generate a csv of all data stored in the metrics property sheet for this project</description>
+      <jobNameTemplate />
+      <resourceName />
+      <timeLimit />
+      <timeLimitUnits>minutes</timeLimitUnits>
+      <workspaceName />
+      <propertySheet>
+      </propertySheet>
+      <step>
+        <stepName>generate</stepName>
+        <alwaysRun>0</alwaysRun>
+        <broadcast>0</broadcast>
+        <command>use strict;
+use warnings;
+use ElectricCommander;
+my $ec = new ElectricCommander;
+
+open(CSV, ">", "report.csv") || die "Could not open report.csv file";
+
+my %metrics = ();
+my $units = $ec->getProperties({path => "/myProject/units"});
+foreach my $unit($units->findnodes("//property")) {
+    my $metric = $unit->findvalue("propertyName");
+    if ($metric ne "emake_build_duration") {
+        $metrics{$metric} = $unit->findvalue("value");
+    }
+}
+print CSV "configuration_id,agents_per_host,emake_build_duration (s)";
+for my $metric (sort keys %metrics) {
+    print CSV "," . $metric . " (" . $metrics{$metric} . ")";
+}
+print CSV "\n";
+
+my $configs = $ec->getProperties({path => "/myProject/metrics"});
+foreach my $config_sheet($configs->findnodes("//property")) {
+    my $config = $config_sheet->findvalue("propertyName");
+    my %counts = ();
+    my $counts = $ec->getProperties({path => "/myProject/metrics/$config"});
+    foreach my $count_sheet($counts->findnodes("//property")) {
+        $counts{$count_sheet->findvalue("propertyName")} = 1;
+    }
+    foreach my $count (sort keys %counts) {
+        my $duration = $ec->getProperty(
+			    "/myProject/metrics/$config/$count/emake_build_duration")
+				->findvalue("//value")->value();
+        print CSV "$config,$count,$duration";
+        for my $metric (sort keys %metrics) {
+			my $value = $ec->getProperty("/myProject/metrics/$config/$count/$metric")
+				->findvalue("//value")->value();
+			print CSV ",$value";
+        }
+        print CSV "\n";
+    }
+}
+
+close(CSV);
+</command>
+        <condition />
+        <description />
+        <errorHandling>abortProcedure</errorHandling>
+        <exclusiveMode>none</exclusiveMode>
+        <logFileName />
+        <parallel>0</parallel>
+        <postProcessor />
+        <precondition />
+        <releaseMode>none</releaseMode>
+        <resourceName />
+        <shell>ec-perl</shell>
+        <timeLimit />
+        <timeLimitUnits>minutes</timeLimitUnits>
+        <workingDirectory />
+        <workspaceName />
+        <propertySheet>
+        </propertySheet>
+      </step>
+    </procedure>
+    <procedure>
+      <procedureName>run_emake_iterate_agents</procedureName>
+      <description>run a single emake build M times with variable enabled agents per host and report the average metrics</description>
+      <jobNameTemplate />
+      <resourceName>$[commander_resource]</resourceName>
+      <timeLimit />
+      <timeLimitUnits>minutes</timeLimitUnits>
+      <workspaceName />
+      <propertySheet>
+        <property>
+          <propertyName>ec_customEditorData</propertyName>
+          <propertySheet>
+            <property>
+              <propertyName>parameters</propertyName>
+              <propertySheet>
+                <property>
+                  <propertyName>agents_per_host</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>clean_command</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>commander_resource</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>configuration_id</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>emake_cm</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>emake_extra_flags</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>emake_install_path</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>num_iterations</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>working_directory</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+              </propertySheet>
+            </property>
+          </propertySheet>
+        </property>
+      </propertySheet>
+      <formalParameter>
+        <formalParameterName>agents_per_host</formalParameterName>
+        <defaultValue />
+        <description>comma-separated list of number of emake agents to enable per host, the procedure will iterate over this list</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>1</required>
+        <type>entry</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>clean_command</formalParameterName>
+        <defaultValue />
+        <description>command to run to clean the source tree</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>0</required>
+        <type>textarea</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>commander_resource</formalParameterName>
+        <defaultValue>local</defaultValue>
+        <description>commander resource on which to run the build</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>0</required>
+        <type>entry</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>configuration_id</formalParameterName>
+        <defaultValue />
+        <description>unique identifier of the configuration used for this run of emake; these id's will be referenced when generating reports</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>1</required>
+        <type>entry</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>emake_cm</formalParameterName>
+        <defaultValue />
+        <description>cluster manager ip address or host name</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>1</required>
+        <type>entry</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>emake_extra_flags</formalParameterName>
+        <defaultValue />
+        <description>everything passed to the build command after "--emake-cm=CM --emake-debug=g --emake-logfile=emake_debug.log"</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>0</required>
+        <type>entry</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>emake_install_path</formalParameterName>
+        <defaultValue>/opt/ecloud/i686_Linux</defaultValue>
+        <description>path to the emake installation</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>0</required>
+        <type>entry</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>num_iterations</formalParameterName>
+        <defaultValue>3</defaultValue>
+        <description>number of iterations over which to average the metrics</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>0</required>
+        <type>entry</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>working_directory</formalParameterName>
+        <defaultValue />
+        <description>working directory from which to run emake</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>1</required>
+        <type>entry</type>
+      </formalParameter>
+      <step>
+        <stepName>iterate</stepName>
+        <alwaysRun>0</alwaysRun>
+        <broadcast>0</broadcast>
+        <command>use strict;
+use warnings;
+use ElectricCommander;
+my $ec = ElectricCommander->new({debug => 0});
+
+my $agents_per_host_list = $ec->getProperty("agents_per_host")
+    ->findvalue("//value")->value();
+my $clean_command = $ec->getProperty("clean_command")
+    ->findvalue("//value")->value();
+my $commander_resource = $ec->getProperty("commander_resource")
+    ->findvalue("//value")->value();
+my $configuration_id = $ec->getProperty("configuration_id")
+    ->findvalue("//value")->value();
+my $emake_cm = $ec->getProperty("emake_cm")
+    ->findvalue("//value")->value();
+my $emake_extra_flags = $ec->getProperty("emake_extra_flags")
+    ->findvalue("//value")->value();
+my $emake_install_path = $ec->getProperty("emake_install_path")
+    ->findvalue("//value")->value();
+my $num_iterations = $ec->getProperty("num_iterations")
+    ->findvalue("//value")->value();
+my $working_directory = $ec->getProperty("working_directory")
+    ->findvalue("//value")->value();
+
+foreach my $agents_per_host(split(',', $agents_per_host_list)) {
+    my $response = $ec->runProcedure({
+        projectName => "$[projectName]",
+        procedureName => "run_emake_iterate_builds",
+        actualParameter => [
+            {
+                actualParameterName => "agents_per_host",
+                value => $agents_per_host
+            },
+            {
+                actualParameterName => "clean_command",
+                value => $clean_command
+            },
+            {
+                actualParameterName => "commander_resource",
+                value => $commander_resource
+            },
+            {
+                actualParameterName => "configuration_id",
+                value => $configuration_id
+            },
+            {
+                actualParameterName => "emake_cm",
+                value => $emake_cm
+            },
+            {
+                actualParameterName => "emake_extra_flags",
+                value => $emake_extra_flags
+            },
+            {
+                actualParameterName => "emake_install_path",
+                value => $emake_install_path
+            },
+            {
+                actualParameterName => "num_iterations",
+                value => $num_iterations
+            },
+            {
+                actualParameterName => "working_directory",
+                value => $working_directory
+            },
+        ]
+    });
+    my $job_id = $response->findvalue("//jobId")->value();
+    $ec->setProperty("/myJob/report-urls/agents: $agents_per_host",
+        "/commander/link/jobDetails/jobs/$job_id");
+    my $status = "";
+    while ($status ne "completed") {
+        sleep 5;
+        $status = $ec->getProperty("//jobs/$job_id/status")
+            ->findvalue("//value")->value();
+    }
+}
+</command>
+        <condition />
+        <description />
+        <errorHandling>abortProcedure</errorHandling>
+        <exclusiveMode>none</exclusiveMode>
+        <logFileName />
+        <parallel>0</parallel>
+        <postProcessor />
+        <precondition />
+        <releaseMode>none</releaseMode>
+        <resourceName />
+        <shell>ec-perl</shell>
+        <timeLimit />
+        <timeLimitUnits>minutes</timeLimitUnits>
+        <workingDirectory />
+        <workspaceName />
+        <propertySheet>
+        </propertySheet>
+      </step>
+    </procedure>
+    <procedure>
+      <procedureName>run_emake_iterate_builds</procedureName>
+      <description>run a single emake build M times with a specific enabled agent count and report the average metrics</description>
+      <jobNameTemplate />
+      <resourceName>$[commander_resource]</resourceName>
+      <timeLimit />
+      <timeLimitUnits>minutes</timeLimitUnits>
+      <workspaceName />
+      <propertySheet>
+        <property>
+          <propertyName>ec_customEditorData</propertyName>
+          <propertySheet>
+            <property>
+              <propertyName>parameters</propertyName>
+              <propertySheet>
+                <property>
+                  <propertyName>agents_per_host</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>clean_command</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>commander_resource</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>configuration_id</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>emake_cm</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>emake_extra_flags</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>emake_install_path</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>num_iterations</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>working_directory</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+              </propertySheet>
+            </property>
+          </propertySheet>
+        </property>
+      </propertySheet>
+      <formalParameter>
+        <formalParameterName>agents_per_host</formalParameterName>
+        <defaultValue />
+        <description>number of emake agents to enable per host</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>1</required>
+        <type>entry</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>clean_command</formalParameterName>
+        <defaultValue />
+        <description>command to run to clean the source tree</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>0</required>
+        <type>textarea</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>commander_resource</formalParameterName>
+        <defaultValue>local</defaultValue>
+        <description>commander resource on which to run the build</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>0</required>
+        <type>entry</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>configuration_id</formalParameterName>
+        <defaultValue />
+        <description>unique identifier of the configuration used for this run of emake; these id's will be referenced when generating reports</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>1</required>
+        <type>entry</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>emake_cm</formalParameterName>
+        <defaultValue />
+        <description>cluster manager ip address or host name</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>1</required>
+        <type>entry</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>emake_extra_flags</formalParameterName>
+        <defaultValue />
+        <description>everything passed to the build command after "--emake-cm=CM --emake-debug=g --emake-logfile=emake_debug.log"</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>0</required>
+        <type>entry</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>emake_install_path</formalParameterName>
+        <defaultValue>/opt/ecloud/i686_Linux</defaultValue>
+        <description>path to the emake installation</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>0</required>
+        <type>entry</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>num_iterations</formalParameterName>
+        <defaultValue>3</defaultValue>
+        <description>number of iterations over which to average the metrics</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>0</required>
+        <type>entry</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>working_directory</formalParameterName>
+        <defaultValue />
+        <description>working directory from which to run emake</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>1</required>
+        <type>entry</type>
+      </formalParameter>
+      <step>
+        <stepName>cm_setup</stepName>
+        <alwaysRun>0</alwaysRun>
+        <broadcast>0</broadcast>
+        <command>export PATH=$[emake_install_path]/bin:$[emake_install_path]/unsupported:$PATH
+password=`ectool getFullCredential cm_admin --value password`
+cmtool --cm training-cm login admin $password
+cmtool --cm training-cm changeAgentsEnabled false
+cmtool --cm training-cm getAgents > cm_get_agents.log</command>
+        <condition />
+        <description />
+        <errorHandling>failProcedure</errorHandling>
+        <exclusiveMode>none</exclusiveMode>
+        <logFileName />
+        <parallel>0</parallel>
+        <postProcessor />
+        <precondition />
+        <releaseMode>none</releaseMode>
+        <resourceName />
+        <shell />
+        <timeLimit />
+        <timeLimitUnits>minutes</timeLimitUnits>
+        <workingDirectory />
+        <workspaceName />
+        <propertySheet>
+        </propertySheet>
+        <attachedCredentials>
+          <credentialName>cm_admin</credentialName>
+        </attachedCredentials>
+      </step>
+      <step>
+        <stepName>cm_enable</stepName>
+        <alwaysRun>0</alwaysRun>
+        <broadcast>0</broadcast>
+        <command>use strict;
+use warnings;
+use ElectricCommander;
+use XML::XPath;
+my $ec = new ElectricCommander;
+
+$ENV{PATH} = "$[emake_install_path]/bin:$[emake_install_path]/unsupported:$ENV{PATH}";
+
+local $/;
+open FILE, "cm_get_agents.log" or die "Couldn't open file: $!";
+my $agents_xml = &lt;FILE>;
+close FILE;
+
+my $agents = XML::XPath->new($agents_xml);
+foreach my $agent($agents->findnodes("//agent")) {
+    my $name = $agent->findvalue("agentName");
+    my $host = $agent->findvalue("hostName");
+    $name =~ m/$host-(.*)/;
+    if ($1 &lt;= $[agents_per_host]) {
+        system("cmtool --cm $[emake_cm] changeAgentsEnabled true --agentName $name");
+    }
+}
+</command>
+        <condition />
+        <description />
+        <errorHandling>failProcedure</errorHandling>
+        <exclusiveMode>none</exclusiveMode>
+        <logFileName />
+        <parallel>0</parallel>
+        <postProcessor />
+        <precondition />
+        <releaseMode>none</releaseMode>
+        <resourceName />
+        <shell>ec-perl</shell>
+        <timeLimit />
+        <timeLimitUnits>minutes</timeLimitUnits>
+        <workingDirectory />
+        <workspaceName />
+        <propertySheet>
+        </propertySheet>
+        <attachedCredentials>
+          <credentialName>cm_admin</credentialName>
+        </attachedCredentials>
+      </step>
+      <step>
+        <stepName>iterate</stepName>
+        <alwaysRun>0</alwaysRun>
+        <broadcast>0</broadcast>
+        <command>use strict;
+use warnings;
+use ElectricCommander;
+my $ec = ElectricCommander->new({debug => 0});
+
+my $agents_per_host = $ec->getProperty("agents_per_host")
+    ->findvalue("//value")->value();
+my $configuration_id = $ec->getProperty("configuration_id")
+    ->findvalue("//value")->value();
+my $clean_command = $ec->getProperty("clean_command")
+    ->findvalue("//value")->value();
+my $commander_resource = $ec->getProperty("commander_resource")
+    ->findvalue("//value")->value();
+my $emake_cm = $ec->getProperty("emake_cm")
+    ->findvalue("//value")->value();
+my $emake_extra_flags = $ec->getProperty("emake_extra_flags")
+    ->findvalue("//value")->value();
+my $emake_install_path = $ec->getProperty("emake_install_path")
+    ->findvalue("//value")->value();
+my $working_directory = $ec->getProperty("working_directory")
+    ->findvalue("//value")->value();
+my $num_iterations = $ec->getProperty("num_iterations")
+    ->findvalue("//value")->value();
+
+my %metrics = ();
+
+for (my $i = 1; $i &lt;= $num_iterations; $i++)
+{
+    my $response = $ec->runProcedure({
+        projectName => "$[projectName]",
+        procedureName => "run_emake_single_build",
+        actualParameter => [
+            {
+                actualParameterName => "clean_command",
+                value => $clean_command
+            },
+            {
+                actualParameterName => "commander_resource",
+                value => $commander_resource
+            },
+            {
+                actualParameterName => "emake_cm",
+                value => $emake_cm
+            },
+            {
+                actualParameterName => "emake_extra_flags",
+                value => $emake_extra_flags
+            },
+            {
+                actualParameterName => "emake_install_path",
+                value => $emake_install_path
+            },
+            {
+                actualParameterName => "working_directory",
+                value => $working_directory
+            },
+        ]
+    });
+    my $job_id = $response->findvalue("//jobId")->value();
+    $ec->setProperty("/myJob/report-urls/iteration: $i",
+        "/commander/link/jobDetails/jobs/$job_id");
+    $ec->setProperty("summary", "Running iteration $i/$num_iterations");
+    my $status = "";
+    while ($status ne "completed") {
+        sleep 5;
+        $status = $ec->getProperty("//jobs/$job_id/status")
+            ->findvalue("//value")->value();
+    }
+    my $properties = $ec->getProperties({jobId => $job_id});
+    foreach my $property($properties->findnodes("//property")) {
+        my $name = $property->findvalue("propertyName")->value();
+        if ($name =~ m/^metric_(.*)/) {
+            my $value = $property->findvalue("value")->value();
+            if ($i == 1) {
+                $metrics{$name} = $value;
+            } else {
+                $metrics{$name} += $value;
+            }
+        }
+    }
+}
+
+print "Averages over $num_iterations iterations:\n";
+$ec->deleteProperty("/myProject/metrics/$configuration_id/$agents_per_host");
+my $average_time = 0;
+while(my($metric_name, $total) = each %metrics) {
+    $metric_name =~ m/metric_(.*)/;
+    my $metric = $1;
+    my $average = sprintf("%.2f", $total / $num_iterations);
+    $ec->setProperty("/myJob/$metric_name", $average);
+    $ec->setProperty("/myProject/metrics/$configuration_id/$agents_per_host/$metric",
+        $average);
+    my $units = $ec->getProperty("/myProject/units/$metric")
+        ->findvalue("//value")->value();
+    if ($metric eq "emake_build_duration") {
+        $average_time = $average;
+    }
+}
+
+$ec->setProperty("summary", "Completed $num_iterations iterations; "
+    . "average run time: ${average_time}s");
+</command>
+        <condition />
+        <description />
+        <errorHandling>abortProcedure</errorHandling>
+        <exclusiveMode>none</exclusiveMode>
+        <logFileName />
+        <parallel>0</parallel>
+        <postProcessor />
+        <precondition />
+        <releaseMode>none</releaseMode>
+        <resourceName />
+        <shell>ec-perl</shell>
+        <timeLimit />
+        <timeLimitUnits>minutes</timeLimitUnits>
+        <workingDirectory />
+        <workspaceName />
+        <propertySheet>
+        </propertySheet>
+      </step>
+    </procedure>
+    <procedure>
+      <procedureName>run_emake_single_build</procedureName>
+      <description>run a single emake build and report the metrics</description>
+      <jobNameTemplate />
+      <resourceName>$[commander_resource]</resourceName>
+      <timeLimit />
+      <timeLimitUnits>minutes</timeLimitUnits>
+      <workspaceName />
+      <propertySheet>
+        <property>
+          <propertyName>ec_customEditorData</propertyName>
+          <propertySheet>
+            <property>
+              <propertyName>parameters</propertyName>
+              <propertySheet>
+                <property>
+                  <propertyName>clean_command</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>commander_resource</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>emake_cm</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>emake_extra_flags</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>emake_install_path</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+                <property>
+                  <propertyName>working_directory</propertyName>
+                  <propertySheet>
+                    <property>
+                      <propertyName>formType</propertyName>
+                      <expandable>1</expandable>
+                      <value>standard</value>
+                    </property>
+                  </propertySheet>
+                </property>
+              </propertySheet>
+            </property>
+          </propertySheet>
+        </property>
+      </propertySheet>
+      <formalParameter>
+        <formalParameterName>clean_command</formalParameterName>
+        <defaultValue />
+        <description>command to run to clean the source tree</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>0</required>
+        <type>textarea</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>commander_resource</formalParameterName>
+        <defaultValue>local</defaultValue>
+        <description>commander resource on which to run the build</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>0</required>
+        <type>entry</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>emake_cm</formalParameterName>
+        <defaultValue />
+        <description>cluster manager</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>1</required>
+        <type>entry</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>emake_extra_flags</formalParameterName>
+        <defaultValue />
+        <description>everything passed to the build command after "--emake-cm=CM --emake-debug=g --emake-logfile=emake_debug.log"</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>0</required>
+        <type>entry</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>emake_install_path</formalParameterName>
+        <defaultValue>/opt/ecloud/i686_Linux</defaultValue>
+        <description>path to the emake installation</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>0</required>
+        <type>entry</type>
+      </formalParameter>
+      <formalParameter>
+        <formalParameterName>working_directory</formalParameterName>
+        <defaultValue />
+        <description>working directory from which to run emake</description>
+        <expansionDeferred>0</expansionDeferred>
+        <required>1</required>
+        <type>entry</type>
+      </formalParameter>
+      <step>
+        <stepName>run_clean</stepName>
+        <alwaysRun>0</alwaysRun>
+        <broadcast>0</broadcast>
+        <command>$[clean_command]</command>
+        <condition />
+        <description />
+        <errorHandling>abortProcedure</errorHandling>
+        <exclusiveMode>none</exclusiveMode>
+        <logFileName />
+        <parallel>0</parallel>
+        <postProcessor />
+        <precondition />
+        <releaseMode>none</releaseMode>
+        <resourceName />
+        <shell />
+        <timeLimit />
+        <timeLimitUnits>minutes</timeLimitUnits>
+        <workingDirectory>$[working_directory]</workingDirectory>
+        <workspaceName />
+        <propertySheet>
+        </propertySheet>
+      </step>
+      <step>
+        <stepName>run_emake</stepName>
+        <alwaysRun>0</alwaysRun>
+        <broadcast>0</broadcast>
+        <command>emake --emake-cm=$[emake_cm] --emake-debug=g --emake-logfile=emake.log $[emake_extra_flags]</command>
+        <condition />
+        <description />
+        <errorHandling>abortProcedure</errorHandling>
+        <exclusiveMode>none</exclusiveMode>
+        <logFileName />
+        <parallel>0</parallel>
+        <postProcessor>postp --loadProperty /myProject/postp</postProcessor>
+        <precondition />
+        <releaseMode>none</releaseMode>
+        <resourceName />
+        <shell />
+        <timeLimit />
+        <timeLimitUnits>minutes</timeLimitUnits>
+        <workingDirectory>$[working_directory]</workingDirectory>
+        <workspaceName />
+        <propertySheet>
+        </propertySheet>
+      </step>
+      <step>
+        <stepName>debug_log</stepName>
+        <alwaysRun>0</alwaysRun>
+        <broadcast>0</broadcast>
+        <command>cat "$[working_directory]/emake.log"</command>
+        <condition />
+        <description />
+        <errorHandling>abortProcedure</errorHandling>
+        <exclusiveMode>none</exclusiveMode>
+        <logFileName>emake_debug.log</logFileName>
+        <parallel>0</parallel>
+        <postProcessor>postp --loadProperty /myProject/postp</postProcessor>
+        <precondition />
+        <releaseMode>none</releaseMode>
+        <resourceName />
+        <shell />
+        <timeLimit />
+        <timeLimitUnits>minutes</timeLimitUnits>
+        <workingDirectory />
+        <workspaceName />
+        <propertySheet>
+        </propertySheet>
+      </step>
+      <step>
+        <stepName>cm_login</stepName>
+        <alwaysRun>0</alwaysRun>
+        <broadcast>0</broadcast>
+        <command>export PATH=$[emake_install_path]/bin:$[emake_install_path]/unsupported:$PATH
+password=`ectool getFullCredential cm_admin --value password`
+cmtool --cm $[emake_cm] login admin $password</command>
+        <condition />
+        <description />
+        <errorHandling>abortProcedure</errorHandling>
+        <exclusiveMode>none</exclusiveMode>
+        <logFileName />
+        <parallel>0</parallel>
+        <postProcessor>postp --loadProperty /myProject/postp</postProcessor>
+        <precondition />
+        <releaseMode>none</releaseMode>
+        <resourceName />
+        <shell />
+        <timeLimit />
+        <timeLimitUnits>minutes</timeLimitUnits>
+        <workingDirectory />
+        <workspaceName />
+        <propertySheet>
+        </propertySheet>
+        <attachedCredentials>
+          <credentialName>cm_admin</credentialName>
+        </attachedCredentials>
+      </step>
+      <step>
+        <stepName>agent_metrics</stepName>
+        <alwaysRun>0</alwaysRun>
+        <broadcast>0</broadcast>
+        <command>export PATH=$[emake_install_path]/bin:$[emake_install_path]/unsupported:$PATH
+cmtool --cm $[emake_cm] runAgentCmd "session performance $[/myParent/emake_build_id]" > session.perf
+agentsummary session.perf</command>
+        <condition />
+        <description />
+        <errorHandling>abortProcedure</errorHandling>
+        <exclusiveMode>none</exclusiveMode>
+        <logFileName>agent_metrics.log</logFileName>
+        <parallel>0</parallel>
+        <postProcessor>postp --loadProperty /myProject/postp</postProcessor>
+        <precondition />
+        <releaseMode>none</releaseMode>
+        <resourceName />
+        <shell />
+        <timeLimit />
+        <timeLimitUnits>minutes</timeLimitUnits>
+        <workingDirectory />
+        <workspaceName />
+        <propertySheet>
+        </propertySheet>
+      </step>
+      <step>
+        <stepName>save_metrics</stepName>
+        <alwaysRun>0</alwaysRun>
+        <broadcast>0</broadcast>
+        <command>ectool setProperty /myParent/agent_metrics_log --valueFile agent_metrics.log
+ectool setProperty /myParent/emake_debug_log --valueFile emake_debug.log</command>
+        <condition />
+        <description />
+        <errorHandling>abortProcedure</errorHandling>
+        <exclusiveMode>none</exclusiveMode>
+        <logFileName />
+        <parallel>0</parallel>
+        <postProcessor />
+        <precondition />
+        <releaseMode>none</releaseMode>
+        <resourceName />
+        <shell />
+        <timeLimit />
+        <timeLimitUnits>minutes</timeLimitUnits>
+        <workingDirectory />
+        <workspaceName />
+        <propertySheet>
+        </propertySheet>
+      </step>
+    </procedure>
+  </project>
+</exportedData>

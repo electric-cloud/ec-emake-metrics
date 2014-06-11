@@ -1,0 +1,29 @@
+<componentContainer>
+  <title>@PLUGIN_KEY@ Help</title>
+  <h2>@PLUGIN_KEY@ Help</h2>
+
+  <h3>Overview</h3>
+  <p>
+  The "Emake-Metrics" plugin provides procedures to run emake builds with different configurations and different numbers of enabled agents to find the best build times (plus lots of other metrics).
+  </p>
+
+  <h3>Usage</h3>
+  <p>You must first install and promote the plugin.  Then, go to project <a href="/commander/link/projectDetails/projects/@PLUGIN_KEY@-@PLUGIN_VERSION@">@PLUGIN_KEY@-@PLUGIN_VERSION@</a>.  Here are the steps to find optimal emake speed:</p>
+  <p>
+    <ul>
+      <li>Create a list of the different <b>configurations</b> with which you will be testing emake.  Each configuration represents a permutation of hardware variables (e.g. hyperthreading=on, RAM=32GB, hdd=SSD).  Assign each of these configurations a unique identifier (e.g. c-1.1) and store this information in a spreadsheet for reference.</li>
+      <li>To iterate over runs of emake, launch the <b>run_emake_iterate_agents</b> procedure (see the parameter descriptions for details).  Do this for each configuration (be sure to pass the configuration identifier that you recorded earlier to the <b>configuration_id</b> parameter.</li>
+      <li>The value of the <b>agents_per_host</b> parameter is very important.  This is a comma-separated list of the number of enabled agents per host that you would like to test with.  For example, if you want to test with up to 48 agents on a host, the value might look something like "12,18,24,30,36,42,48".</li>
+      <li>The value of the <b>num_iterations</b> determines how many times to run each individual emake build and average out the metrics.  The default of 3 is usually a good number unless you have wildly inconsistent builds in which case you may want to increase it.</li>
+      <li>Once you're done running run_emake_iterate_agents for all your different configurations, launch the <b>generate_csv</b> procedure.  This will create a file called <b>report.csv</b> in the job workspace.  Chart the data to find the best build time or report on other key metrics.</li>
+    </ul>
+  </p>
+
+  <h2>@PLUGIN_KEY@ Release Notes</h2>
+  <h3>v1.0.0</h3>
+  <p>
+    <ul>
+      <li>Initial version</li>
+    </ul>
+  </p>
+</componentContainer>

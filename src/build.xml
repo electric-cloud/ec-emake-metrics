@@ -1,0 +1,14 @@
+<project name="Emake-Metrics" default="package" basedir=".">
+  <description>
+    Build the Emake-Metrics plugin
+  </description>
+
+  <!-- Plugin-specific properties -->
+  <property name="pluginKey" value="Emake-Metrics" />
+  <property name="pluginVersion" value="1.0.0" />
+
+  <path id="extras" />
+  <property name="gwt.path.extras" value="extras" />
+
+  <import file="${SDKROOT}/build/buildTargets.xml" />
+</project>
