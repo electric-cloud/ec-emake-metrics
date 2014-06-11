@@ -19,7 +19,6 @@ The sources are available in the src directory. They were built using the Comman
 AUTHOR:
 
 Tanay Nagjee, Electric Cloud Solutions Engineer
-
 tanay@electric-cloud.com
 
 LEGAL:
