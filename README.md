@@ -1,10 +1,10 @@
 OVERVIEW:
 
-The "Emake-Metrics" plugin provides procedures to run emake builds with different configurations and different numbers of enabled agents to find the best build times (plus lots of other metrics).
+The "Emake-Metrics" ElectricCommander/ElectricFlow plugin provides procedures to run ElectricAccelerator builds with different configurations and different numbers of enabled agents to find the best build times (plus lots of other metrics).
 
 USAGE:
 
-You must first install and promote the plugin. Then, go to the installed plugins list and click on Emake-Metrics to view the procedures. Here are the steps to find optimal emake speed:
+You must first install and promote the plugin (available in out/Emake-Metrics.jar). Then, go to the installed plugins list and click on Emake-Metrics to view the procedures. Here are the steps to find optimal emake speed:
 
 * Create a list of the different configurations with which you will be testing emake. Each configuration represents a permutation of hardware variables (e.g. hyperthreading=on, RAM=32GB, hdd=SSD). Assign each of these configurations a unique identifier (e.g. c-1.1) and store this information in a spreadsheet for reference.
 * To iterate over runs of emake, launch the run_emake_iterate_agents procedure (see the parameter descriptions for details). Do this for each configuration (be sure to pass the configuration identifier that you recorded earlier to the configuration_id parameter.
@@ -21,6 +21,6 @@ AUTHOR:
 Tanay Nagjee, Electric Cloud Solutions Engineer
 tanay@electric-cloud.com
 
-LEGAL:
+DISCLAIMER:
 
-This module is not officially supported by Electric Cloud. It has undergone no formal testing and you may run into issues that have not been uncovered in the limited manual testing done so far. Electric Cloud should not be held liable for any repercussions of using this software.
+This module is not officially supported by Electric Cloud.
